@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>体制内/体制外工作生态适配测试</title>
+    <meta name="description" content="32 道题，测出你更适合体制内、体制外，还是混合型职业路径。" />
+    <style>
+      :root {
+        --bg: #f8f5ec;
+        --paper: #fffdf7;
+        --ink: #24231f;
+        --muted: #7b7568;
+        --line: #ddd5c5;
+        --accent: #205f78;
+        --accent-2: #9c7a2f;
+        --soft: #efe8d8;
+        --danger: #a75a42;
+        --good: #47715c;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(rgba(32, 95, 120, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(32, 95, 120, 0.035) 1px, transparent 1px),
+          var(--bg);
+        background-size: 28px 28px;
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        letter-spacing: 0;
+      }
+
+      button {
+        font: inherit;
+        color: inherit;
+      }
+
+      .app {
+        width: min(100%, 480px);
+        min-height: 100vh;
+        margin: 0 auto;
+        background: rgba(255, 253, 247, 0.72);
+        border-left: 1px solid rgba(221, 213, 197, 0.7);
+        border-right: 1px solid rgba(221, 213, 197, 0.7);
+      }
+
+      .screen { display: none; min-height: 100vh; }
+      .screen.active { display: block; }
+
+      .home {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 52px 26px 28px;
+      }
+
+      .eyebrow {
+        color: var(--accent-2);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+      }
+
+      h1 {
+        margin: 24px 0 18px;
+        font-size: 34px;
+        line-height: 1.18;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .quote {
+        margin: 34px 0;
+        padding: 20px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        font-size: 17px;
+        line-height: 1.7;
+      }
+
+      .dims {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 24px 0;
+      }
+
+      .dim {
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 247, 0.8);
+        padding: 12px;
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .primary-btn,
+      .ghost-btn {
+        width: 100%;
+        min-height: 48px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .ghost-btn {
+        background: transparent;
+        color: var(--accent);
+      }
+
+      .notice {
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(255, 253, 247, 0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+        padding: 13px 18px 12px;
+      }
+
+      .toprow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .progress {
+        height: 4px;
+        background: var(--soft);
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: width 0.25s ease;
+      }
+
+      .quiz-body { padding: 32px 22px 24px; }
+
+      .q-index {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .q-index strong {
+        font-size: 42px;
+        line-height: 1;
+        color: rgba(32, 95, 120, 0.16);
+      }
+
+      .q-index span {
+        flex: 1;
+        height: 1px;
+        background: var(--line);
+      }
+
+      .question {
+        margin: 0 0 26px;
+        font-size: 20px;
+        line-height: 1.55;
+      }
+
+      .options {
+        display: grid;
+        gap: 12px;
+      }
+
+      .option {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 12px;
+        align-items: start;
+        text-align: left;
+        padding: 15px;
+        border: 1px solid var(--line);
+        background: rgba(255, 253, 247, 0.86);
+        cursor: pointer;
+      }
+
+      .option.selected {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .key {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid currentColor;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .option-text {
+        padding-top: 3px;
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .loading {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 26px;
+        text-align: center;
+      }
+
+      .spinner {
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 26px;
+        border: 2px solid var(--line);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .loading-text {
+        min-height: 64px;
+        font-size: 17px;
+        line-height: 1.6;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .result {
+        padding: 28px 22px 40px;
+      }
+
+      .result-hero {
+        padding: 26px 0 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .badge {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 6px 10px;
+        background: var(--soft);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .result h2 {
+        margin: 0 0 10px;
+        font-size: 32px;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .score-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .score-box {
+        border: 1px solid var(--line);
+        padding: 14px;
+        background: rgba(255, 253, 247, 0.7);
+      }
+
+      .score-box span {
+        color: var(--muted);
+        display: block;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .score-box strong {
+        color: var(--accent);
+        font-size: 26px;
+      }
+
+      .section {
+        padding: 24px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .section p {
+        margin: 0;
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.85;
+      }
+
+      .metrics {
+        display: grid;
+        gap: 12px;
+      }
+
+      .metric-top {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 7px;
+      }
+
+      .bar {
+        height: 8px;
+        background: var(--soft);
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+      }
+
+      .two-col {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mini {
+        border: 1px solid var(--line);
+        padding: 14px;
+        background: rgba(255, 253, 247, 0.7);
+      }
+
+      .mini strong {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--accent);
+      }
+
+      .mini p {
+        font-size: 14px;
+      }
+
+      .actions {
+        display: grid;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section id="home" class="screen active">
+        <div class="home">
+          <div>
+            <div class="eyebrow">WORK ECOLOGY TEST</div>
+            <h1>你更适合体制内，还是体制外？</h1>
+            <p class="lead">这份测试会帮你观察：稳定、自由、规则和风险，哪一种工作生态更适合你。</p>
+            <div class="quote">你以为你想要稳定，其实你可能只是讨厌失控。你以为你想要自由，其实你可能只是受不了无意义的规则。</div>
+            <div class="dims">
+              <div class="dim">稳定感来源</div>
+              <div class="dim">规则适应度</div>
+              <div class="dim">风险承受度</div>
+              <div class="dim">成长路径偏好</div>
+            </div>
+          </div>
+          <div>
+            <button class="primary-btn" id="startBtn">开始测试</button>
+            <p class="notice">32 道题，约 3 分钟。纯趣味职业探索，不构成就业或职业规划建议。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" class="screen">
+        <div class="topbar">
+          <div class="toprow">
+            <span id="countText">01 / 32</span>
+            <span id="moduleText">稳定感来源</span>
+          </div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+        <div class="quiz-body">
+          <div class="q-index">
+            <strong id="bigIndex">01</strong>
+            <span></span>
+          </div>
+          <h2 class="question" id="questionText"></h2>
+          <div class="options" id="options"></div>
+          <p class="notice">选择后自动进入下一题</p>
+        </div>
+      </section>
+
+      <section id="loading" class="screen">
+        <div class="loading">
+          <div>
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">正在分析你的工作生态偏好……</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="result" class="screen">
+        <div class="result">
+          <div class="result-hero">
+            <span class="badge" id="resultBadge">你的主类型</span>
+            <h2 id="resultName"></h2>
+            <p class="subtitle" id="resultSubtitle"></p>
+            <div class="score-row">
+              <div class="score-box">
+                <span>体制内适配度</span>
+                <strong id="insideScore">--</strong>
+              </div>
+              <div class="score-box">
+                <span>体制外适配度</span>
+                <strong id="outsideScore">--</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>核心结论</h3>
+            <p id="coreConclusion"></p>
+          </div>
+
+          <div class="section">
+            <h3>你的关键指数</h3>
+            <div class="metrics" id="metrics"></div>
+          </div>
+
+          <div class="section">
+            <h3>如果走体制内</h3>
+            <p id="insidePath"></p>
+          </div>
+
+          <div class="section">
+            <h3>如果走体制外</h3>
+            <p id="outsidePath"></p>
+          </div>
+
+          <div class="section">
+            <h3>风险提醒</h3>
+            <p id="risk"></p>
+          </div>
+
+          <div class="section">
+            <h3>90 天验证计划</h3>
+            <div class="two-col" id="plan"></div>
+          </div>
+
+          <div class="section">
+            <h3>适合发给朋友看的结果文案</h3>
+            <p id="shareText"></p>
+          </div>
+
+          <div class="actions">
+            <button class="primary-btn" id="copyBtn">复制结果文案</button>
+            <button class="ghost-btn" id="restartBtn">重新测试</button>
+          </div>
+          <p class="footer-note">注意：本测试为趣味自我探索内容，不构成职业规划、就业选择、考试或投资建议。真正的职业决策需要结合个人背景、家庭资源、城市、行业和现实机会。</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const questions = [
+        { module: "稳定感来源", text: "如果一份工作未来三年收入稳定，但成长很慢，你会：", options: { A: "觉得安心，慢一点也可以", B: "可以接受，但希望有明确上升路径", C: "会焦虑，怕自己被困住", D: "想把它当成基本盘，再发展别的可能" } },
+        { module: "稳定感来源", text: "你最害怕哪种工作状态？", options: { A: "规则天天变，没有确定标准", B: "努力没人看见，资源分配不透明", C: "流程太慢，想法落不了地", D: "只能做一种角色，不能横向发展" } },
+        { module: "稳定感来源", text: "当你听到“编制、长期、稳定”这些词，你的第一反应是：", options: { A: "终于不用每天担心变化", B: "如果有上升通道，我能接受", C: "有点窒息，怕人生被定型", D: "可以作为底盘，但不能只有这个" } },
+        { module: "稳定感来源", text: "你更羡慕哪种人？", options: { A: "稳稳积累，越老越吃香", B: "在大平台里拿到关键位置", C: "靠自己能力做出市场结果", D: "既有稳定底盘，又有自由收入" } },
+        { module: "稳定感来源", text: "如果未来一年外部环境很乱，你更想：", options: { A: "进入一个确定性更高的系统", B: "找一个资源更集中的平台", C: "提升能直接变现的能力", D: "搭一个进可攻退可守的组合" } },
+        { module: "稳定感来源", text: "你对“按部就班”的真实感受是：", options: { A: "不排斥，它让我有秩序感", B: "可以，但我希望它通向更高位置", C: "容易失去兴奋感", D: "适合一部分生活，不适合全部人生" } },
+        { module: "稳定感来源", text: "你做选择时最想保住的是：", options: { A: "确定性", B: "上升空间", C: "自主性", D: "可切换的余地" } },
+        { module: "稳定感来源", text: "如果家人建议你求稳，你通常会：", options: { A: "认真考虑，因为安全感很重要", B: "看这个稳能不能带来资源", C: "本能反感，觉得被限制", D: "想折中，先稳住再留后路" } },
+
+        { module: "规则适应度", text: "面对层级明确的组织，你更可能：", options: { A: "适应得不错，知道该怎么做", B: "研究规则，找到向上的方法", C: "容易不耐烦，觉得效率太低", D: "表面适应，内心保留自己的节奏" } },
+        { module: "规则适应度", text: "领导临时改需求，你第一反应是：", options: { A: "先确认边界和标准", B: "判断这件事对我有没有长期价值", C: "直接想办法推进，别卡流程", D: "看能不能沉淀成自己的方法" } },
+        { module: "规则适应度", text: "你最不喜欢哪种规则？", options: { A: "没有规则", B: "规则背后没有公平回报", C: "规则压住了创造力", D: "规则让我不能多线发展" } },
+        { module: "规则适应度", text: "当一件事要经过很多流程才能推进，你会：", options: { A: "接受流程，本来就该稳妥", B: "找关键人和关键节点", C: "很想绕过去直接做", D: "边推进边找系统外的方法" } },
+        { module: "规则适应度", text: "你对人情世故的态度更像：", options: { A: "是必要的社会规则", B: "是资源流动的一部分", C: "能少碰就少碰", D: "懂一点，但不想被它定义" } },
+        { module: "规则适应度", text: "你在团队里最舒服的位置是：", options: { A: "职责清晰的执行者或稳定骨干", B: "能影响资源和方向的关键角色", C: "能自主决策的一线负责人", D: "连接不同资源的跨界角色" } },
+        { module: "规则适应度", text: "如果你的想法被组织流程压住，你会：", options: { A: "先等合适时机", B: "寻找能支持我的上级或资源", C: "换个地方做", D: "保留想法，另开一条支线" } },
+        { module: "规则适应度", text: "你最希望工作给你的身份感是：", options: { A: "可靠、稳定、被信任", B: "有位置、有影响力", C: "自由、有结果、有掌控感", D: "多元、可迁移、不被单一标签困住" } },
+
+        { module: "风险承受度", text: "如果收入三个月不稳定，但上限更高，你会：", options: { A: "明显焦虑，不太能接受", B: "除非回报和资源很清晰", C: "可以接受，前提是我能控制过程", D: "会保留稳定收入，同时试水" } },
+        { module: "风险承受度", text: "你面对不确定机会时，最常见的反应是：", options: { A: "先想最坏情况", B: "先算投入产出", C: "先试起来再调整", D: "小规模验证，不轻易All in" } },
+        { module: "风险承受度", text: "你更难忍受的是：", options: { A: "没有保障", B: "没有上升", C: "没有自主权", D: "没有第二条路" } },
+        { module: "风险承受度", text: "看到朋友辞职创业/自由职业，你会：", options: { A: "佩服，但不太想自己这样", B: "想知道他背后有什么资源", C: "很心动，觉得人生应该这样活", D: "心动，但会先设计缓冲带" } },
+        { module: "风险承受度", text: "如果一件事没有标准答案，你会：", options: { A: "不安，想找参考模板", B: "找规则制定者或利益相关方", C: "兴奋，因为可以自己定义", D: "先做一个可验证的小版本" } },
+        { module: "风险承受度", text: "你最像哪句话？", options: { A: "慢一点，但别翻车", B: "要上升，就要看清局势", C: "没有自主空间的安全感，也会让人消耗", D: "比起二选一，我更想保留组合空间" } },
+        { module: "风险承受度", text: "你的金钱安全感主要来自：", options: { A: "稳定现金流", B: "平台和位置带来的资源", C: "个人能力可变现", D: "多渠道收入和可迁移技能" } },
+        { module: "风险承受度", text: "如果必须承担一次职业风险，你更愿意：", options: { A: "选择低风险、长期积累的路线", B: "押注一个高价值平台或岗位", C: "直接进入市场验证自己", D: "用副业/项目先验证，再决定" } },
+
+        { module: "成长路径偏好", text: "你希望五年后的自己更像：", options: { A: "稳定领域里的资深可靠者", B: "组织系统里的关键位置", C: "市场里能独立拿结果的人", D: "拥有多种身份和收入结构的人" } },
+        { module: "成长路径偏好", text: "你最愿意长期投入的是：", options: { A: "专业资历和稳定声誉", B: "平台资源和组织影响力", C: "产品、服务、个人品牌或客户", D: "可迁移能力和组合资产" } },
+        { module: "成长路径偏好", text: "如果现在重新选择，你最想改变的是：", options: { A: "更早进入稳定系统", B: "更早理解资源和规则", C: "更早独立做事", D: "更早保留第二曲线" } },
+        { module: "成长路径偏好", text: "你觉得自己最大的浪费可能是：", options: { A: "在变化里消耗太多安全感", B: "没有把努力换成位置", C: "把时间耗在低效规则里", D: "把能力锁在单一身份里" } },
+        { module: "成长路径偏好", text: "你更想被别人评价为：", options: { A: "靠谱、稳定、长期主义", B: "聪明、会借力、有格局", C: "有冲劲、有创造力、有结果", D: "灵活、复合、越做越值钱" } },
+        { module: "成长路径偏好", text: "未来一年你最该补的是：", options: { A: "专业证书、资历和稳定节奏", B: "组织理解、人脉和表达能力", C: "销售、产品、交付和市场反馈", D: "副业验证、资产沉淀和能力迁移" } },
+        { module: "成长路径偏好", text: "你最不想过的人生是：", options: { A: "每天漂着，没有稳定落点", B: "努力很多，却没有位置和筹码", C: "一眼望到头，无法自主选择", D: "只有一条路，想变也变不了" } },
+        { module: "成长路径偏好", text: "做完这个测试，你最希望得到哪个答案？", options: { A: "我适合稳定系统，不用再自责", B: "我适合在系统里向上走", C: "我适合去市场里闯一闯", D: "我适合设计一条混合路线" } }
+      ];
+
+      const results = {
+        A: {
+          name: "秩序深耕型",
+          subtitle: "稳定结构会让你的长期能力更容易释放。",
+          inside: 88,
+          outside: 42,
+          metrics: [
+            ["稳定需求", 92],
+            ["规则适应", 84],
+            ["风险承受", 38],
+            ["长期复利", 86]
+          ],
+          core: "你适合在规则清晰、预期稳定、评价体系相对明确的环境里长期积累。体制内、大组织、稳定事业单位或强流程平台，容易给你提供安全感和秩序感。你真正害怕的是：投入很多努力之后，方向又被反复推翻。",
+          insidePath: "如果走体制内，你会更容易进入自己的节奏。你适合先建立可靠形象，再用专业能力和稳定输出获得信任。你的上升方式偏向持续在场、慢慢积累信用。",
+          outsidePath: "如果走体制外，你需要非常清晰的现金流和边界，否则不确定性会持续消耗你。除非你已经有稳定客户、成熟技能或家庭缓冲，否则不建议突然切换。",
+          risk: "你的风险是把“稳定”误认为“不能改变”。如果环境已经长期压缩你的成长，你可能会因为害怕失控而错过调整窗口。",
+          plan: [
+            ["第 1-30 天", "盘点你能长期积累的专业资历、证书、岗位和组织信用。"],
+            ["第 31-60 天", "找 3 个体制内/大组织里发展不错的人，研究他们的上升路径。"],
+            ["第 61-90 天", "确定一个稳定主线，同时保留一个低风险副线练习。"]
+          ],
+          share: "我测出的是“秩序深耕型”：稳定结构会让我更容易释放长期能力。"
+        },
+        B: {
+          name: "资源博弈型",
+          subtitle: "你适合系统，但不适合只做系统里的普通零件。",
+          inside: 82,
+          outside: 63,
+          metrics: [
+            ["规则理解", 86],
+            ["资源敏感", 91],
+            ["位置意识", 88],
+            ["自主冲动", 58]
+          ],
+          core: "你并不排斥体制内或大组织，甚至能理解规则、人情、资源和位置的重要性。你真正不能接受的是：自己一直在低价值位置里消耗，却看不到上升路径。",
+          insidePath: "如果走体制内，你需要关注关键岗位、核心部门、表达机会和资源节点。对你来说，稳定只是底层条件，位置感和上升空间同样重要。",
+          outsidePath: "如果走体制外，你也会倾向选择有资源、有平台、有杠杆的路径。大厂、平台型公司、咨询、销售、BD、管理等需要资源判断的岗位，可能更容易发挥你的优势。",
+          risk: "你的风险是太早进入博弈心态，忽略了基本能力建设。没有能力底盘的资源意识，会变成焦虑和算计。",
+          plan: [
+            ["第 1-30 天", "画出你所在环境的资源地图：谁决定机会，什么能力最稀缺。"],
+            ["第 31-60 天", "主动争取一次可见度更高的任务或项目。"],
+            ["第 61-90 天", "建立自己的能力证据，别只停留在关系判断。"]
+          ],
+          share: "我测出的是“资源博弈型”：我适合系统，但不适合只做系统里的普通零件。"
+        },
+        C: {
+          name: "自由开拓型",
+          subtitle: "能直接看见结果的自主空间，会让你更容易被激活。",
+          inside: 36,
+          outside: 90,
+          metrics: [
+            ["自主驱动", 94],
+            ["市场反馈", 88],
+            ["规则耐受", 32],
+            ["风险承受", 78]
+          ],
+          core: "你对僵化流程和慢反馈非常敏感。比起稳定，你更需要掌控感、创造空间和清晰结果。体制内或强层级组织可能让你感到安全，但长期看也可能让你慢慢失去兴奋感。",
+          insidePath: "如果走体制内，你需要选择相对有创造空间、能接触项目、能沉淀专业影响力的位置。过于重复、过于封闭的岗位会让你消耗很快。",
+          outsidePath: "如果走体制外，你更容易被激活。项目制、市场化岗位、自由职业、创业型组织、内容产品、销售增长等路径，都可能让你更快找到反馈。",
+          risk: "你的风险是把“讨厌规则”误认为“适合自由”。真正的自由职业并不轻松，它只是把上级压力换成客户、现金流和市场压力。",
+          plan: [
+            ["第 1-30 天", "用一个小项目验证你的独立交付能力，不要只停留在想象。"],
+            ["第 31-60 天", "找到愿意为你能力付费的人或场景。"],
+            ["第 61-90 天", "计算最低现金流，不要在情绪高点裸辞。"]
+          ],
+          share: "我测出的是“自由开拓型”：能直接看见结果的自主空间，会让我更容易被激活。"
+        },
+        D: {
+          name: "混合迁移型",
+          subtitle: "稳定底盘加自由副线，可能比单一路径更适合你。",
+          inside: 71,
+          outside: 76,
+          metrics: [
+            ["组合能力", 93],
+            ["迁移潜力", 89],
+            ["稳定底盘", 74],
+            ["副线意识", 91]
+          ],
+          core: "你不适合被单一路径定义。完全体制内会让你觉得被锁死，完全体制外又可能让你缺少安全底盘。你真正适合的是组合式职业路径：一个稳定主线，加一个可迁移、可复利的副线。",
+          insidePath: "如果走体制内，你需要从一开始就设计能力迁移：写作、咨询、课程、工具、资源整合、专业品牌。不要只把自己变成一个岗位。",
+          outsidePath: "如果走体制外，你也需要保留稳定现金流或长期客户，避免一直被短期项目牵着走。你的优势在于整合，不适合频繁清零重来。",
+          risk: "你的风险是想要太多，导致主线不够深、副线不够实。混合路线需要有顺序地搭桥，先稳住主线，再验证副线。",
+          plan: [
+            ["第 1-30 天", "确定你的稳定主线：收入、资历、平台或客户到底靠什么来。"],
+            ["第 31-60 天", "选择一个副线方向，只做一个可交付的小产品或小服务。"],
+            ["第 61-90 天", "把副线结果沉淀成作品、案例或可重复流程。"]
+          ],
+          share: "我测出的是“混合迁移型”：稳定底盘加自由副线，可能比单一路径更适合我。"
+        }
+      };
+
+      const loadingLines = [
+        "正在分析你的稳定感来源……",
+        "正在识别你的规则适应度……",
+        "正在计算你的风险承受度……",
+        "正在生成工作生态适配报告……",
+        "报告已生成。"
+      ];
+
+      let current = 0;
+      let answers = {};
+      let locked = false;
+
+      const $ = (id) => document.getElementById(id);
+      const screens = ["home", "quiz", "loading", "result"];
+
+      function show(id) {
+        screens.forEach((screen) => $(screen).classList.toggle("active", screen === id));
+        window.scrollTo(0, 0);
+      }
+
+      function renderQuestion() {
+        const q = questions[current];
+        $("countText").textContent = `${String(current + 1).padStart(2, "0")} / ${questions.length}`;
+        $("moduleText").textContent = q.module;
+        $("progressBar").style.width = `${((current + 1) / questions.length) * 100}%`;
+        $("bigIndex").textContent = String(current + 1).padStart(2, "0");
+        $("questionText").textContent = q.text;
+        $("options").innerHTML = "";
+
+        Object.entries(q.options).forEach(([key, text]) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.type = "button";
+          btn.innerHTML = `<span class="key">${key}</span><span class="option-text">${text}</span>`;
+          btn.addEventListener("click", () => choose(key, btn));
+          $("options").appendChild(btn);
+        });
+      }
+
+      function choose(key, btn) {
+        if (locked) return;
+        locked = true;
+        answers[current] = key;
+        btn.classList.add("selected");
+
+        setTimeout(() => {
+          if (current < questions.length - 1) {
+            current += 1;
+            locked = false;
+            renderQuestion();
+          } else {
+            startLoading();
+          }
+        }, 260);
+      }
+
+      function startLoading() {
+        show("loading");
+        let i = 0;
+        $("loadingText").textContent = loadingLines[0];
+        const timer = setInterval(() => {
+          i += 1;
+          if (i < loadingLines.length) {
+            $("loadingText").textContent = loadingLines[i];
+          } else {
+            clearInterval(timer);
+            renderResult();
+            show("result");
+          }
+        }, 760);
+      }
+
+      function calculate() {
+        const counts = { A: 0, B: 0, C: 0, D: 0 };
+        Object.values(answers).forEach((key) => counts[key] += 1);
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return {
+          primary: sorted[0][0],
+          secondary: sorted[0][1] - sorted[1][1] <= 3 ? sorted[1][0] : null,
+          counts
+        };
+      }
+
+      function renderResult() {
+        const calc = calculate();
+        const result = results[calc.primary];
+        $("resultBadge").textContent = calc.secondary ? `你的主类型：${result.name} / 副倾向：${results[calc.secondary].name}` : "你的主类型";
+        $("resultName").textContent = result.name;
+        $("resultSubtitle").textContent = result.subtitle;
+        $("insideScore").textContent = result.inside;
+        $("outsideScore").textContent = result.outside;
+        $("coreConclusion").textContent = result.core;
+        $("insidePath").textContent = result.insidePath;
+        $("outsidePath").textContent = result.outsidePath;
+        $("risk").textContent = result.risk;
+        $("shareText").textContent = result.share;
+
+        $("metrics").innerHTML = result.metrics.map(([label, value]) => `
+          <div>
+            <div class="metric-top"><span>${label}</span><strong>${value}</strong></div>
+            <div class="bar"><span style="width:${value}%"></span></div>
+          </div>
+        `).join("");
+
+        $("plan").innerHTML = result.plan.map(([title, content]) => `
+          <div class="mini"><strong>${title}</strong><p>${content}</p></div>
+        `).join("");
+      }
+
+      $("startBtn").addEventListener("click", () => {
+        current = 0;
+        answers = {};
+        locked = false;
+        renderQuestion();
+        show("quiz");
+      });
+
+      $("restartBtn").addEventListener("click", () => {
+        current = 0;
+        answers = {};
+        locked = false;
+        show("home");
+      });
+
+      $("copyBtn").addEventListener("click", async () => {
+        const text = $("shareText").textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          $("copyBtn").textContent = "已复制";
+          setTimeout(() => $("copyBtn").textContent = "复制结果文案", 1200);
+        } catch {
+          alert(text);
+        }
+      });
+    </script>
+  </body>
+</html>
